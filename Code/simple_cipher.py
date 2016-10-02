@@ -5,7 +5,6 @@ Created on Wed Sep 28 2016
 """
 import cv2
 import numpy as np
-import random
 
 N = 50                                                  #size of one time pad
 l = 1                                                   #lower limit of random integer
