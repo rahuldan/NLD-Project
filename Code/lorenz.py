@@ -5,9 +5,13 @@ Created on Sat Oct 8 2016
 """
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
-Xmin = 0.0                                                  #lower limit of bin
+
+Xub = 5.0
+Xlb = -5.0
 Xmax = 1.0                                                  #upper limit of bin
+Xmin = 0                                                    #lower limit of bin
 S = 256
 epsilon = (Xmax - Xmin) / S
 n = 0.7                                                     #gaussian random variable parameter
@@ -18,7 +22,10 @@ R = 28.0                                                    #of lorenz
 beta = 2.667                                                #system
 p = 1                                                       #modulo parameter
 
-img = cv2.imread("image file name")                         #Enter the name of the image file
+iter = 100000                                                #for statistical analysis
+stat = np.zeros(S)
+
+img = cv2.imread("square.jpg")                         #Enter the name of the image file
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 img_shape = np.shape(img)
@@ -50,11 +57,13 @@ def encryption():
             while True:
                 X = RK4(X)
                 count += 1
-                k = np.random.normal(0.5, 0.5)              #generate a normal random variable
-                if count > N0 and X[0] % p >= map_point(bin_n) and X[0] % p < (map_point(bin_n) + epsilon) and k >= n:
-                    enc_img[i][j] = count                   #using x for encryption
-                    print('enc', i, ' ', j)
-                    break
+                #k = np.random.normal(0.5, 0.5)              #generate a normal random variable
+                k = 1
+                if X[0] <= Xub and X[0] >= Xlb:
+                    if count > N0 and X[0] % p >= map_point(bin_n) and X[0] % p < (map_point(bin_n) + epsilon) and k >= n:
+                        enc_img[i][j] = count                   #using x for encryption
+                        #print('enc', i, ' ', j)
+                        break
 
 def decryption():
     X = np.array([1, 1, 1])
@@ -63,7 +72,27 @@ def decryption():
             for k in range(0, enc_img[i][j]):
                 X = RK4(X)
             dec_img[i][j] = find_bin(X[0] % p)
-            print('dec', i, ' ', j)
+            #print('dec', i, ' ', j)
+
+def statistic():
+    X = np.array([4.0, -1.0, -3.0])
+    for i in range(0, iter):
+        X = RK4(X)
+        if X[0] >= Xlb and X[0] <= Xub:
+            temp = X[0] % p
+            bin_n = find_bin(temp)
+            stat[bin_n] += 1
+
+statistic()
+a = np.arange(S)
+print(stat)
+
+plt.xlabel('Index of bin')
+plt.ylabel('Frequency')
+plt.scatter(a, stat, label = 'x = 4, y = -1, z = -3')
+plt.legend(loc = 'upper right')
+plt.show()
+
 encryption()
 decryption()
 cv2.imshow('original', img)                                 #displays image

@@ -5,8 +5,9 @@ Created on Sat Oct 1 2016
 """
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
-R = 3.8
+R = 4.0
 Xmin = 0.2                                                  #lower limit of bin
 Xmax = 0.8                                                  #upper limit of bin
 S = 256
@@ -15,7 +16,10 @@ n = 0.7
 N0 = 250                                                    #minimum number of iteration
 X0 = 0.2323232                                              #initial condition
 
-img = cv2.imread("image file name")                         #Enter the name of the image file 
+iter = 60000                                                #for statistical analysis
+stat = np.zeros(S)
+
+img = cv2.imread("square.jpg")                              #Enter the name of the image file
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 img_shape = np.shape(img)
@@ -53,8 +57,26 @@ def decryption():
                 X1 = logistic_map(X1)
             dec_img[i][j] = find_bin(X1)
 
+def logistic_stat():
+    X = 0.2323232                                                     #make it random
+    for i in range(0, iter):
+        X = logistic_map(X)
+        bin_n = find_bin(X)
+        if bin_n < 256 and bin_n >= 0:
+            stat[bin_n] += 1
+
+logistic_stat()
+a = np.arange(S)
+
+plt.xlabel('Index of bin')
+plt.ylabel('Frequency')
+plt.scatter(a, stat, label = 'x = 0.2323232, R = 4.0')
+plt.legend(loc = 'upper right')
+plt.show()
+
 encryption()
 decryption()
+
 cv2.imshow('original', img)                                     #displays image
 cv2.imshow('encrypted image', enc_img)
 cv2.imshow('decrypted image', dec_img)
