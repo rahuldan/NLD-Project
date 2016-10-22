@@ -46,6 +46,7 @@ def decryption():
 
 encryption()
 decryption()
+
 cv2.imshow('original', img)                             #displays image
 cv2.imshow('encrypted image', enc_img)
 cv2.imshow('decrypted image', dec_img)

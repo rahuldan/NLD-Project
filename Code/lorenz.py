@@ -25,7 +25,7 @@ p = 1                                                       #modulo parameter
 iter = 100000                                                #for statistical analysis
 stat = np.zeros(S)
 
-img = cv2.imread("square.jpg")                         #Enter the name of the image file
+img = cv2.imread("image file name")                         #Enter the name of the image file
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 img_shape = np.shape(img)
