@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 R = 4.0
 Xmin = 0.2                                                  #lower limit of bin
 Xmax = 0.8                                                  #upper limit of bin
-S = 256
+S = 317
 epsilon = (Xmax - Xmin) / S
 n = 0.7
 N0 = 250                                                    #minimum number of iteration
@@ -66,7 +66,7 @@ def logistic_stat():
     for i in range(0, iter):
         X = logistic_map(X)
         bin_n = find_bin(X)
-        if bin_n < 256 and bin_n >= 0:
+        if bin_n < S and bin_n >= 0:
             stat[bin_n] += 1
 
 b = np.linspace(Xmin, Xmax, num = num_val)
@@ -78,10 +78,10 @@ def logistic_stat2():
         for j in range(0, iter):
             stat2[i] = logistic_map(stat2[i])
 
-"""logistic_stat2()
+logistic_stat2()
 plt.plot(b, stat2, label = 'R = 4.0')
 plt.xlabel('Initial Condition')
-plt.ylabel('Mapped Value after 200 Iterations')
+plt.ylabel('Mapped Value after 10000 Iterations')
 plt.legend(loc = 'upper right')
 plt.show()
 
@@ -92,13 +92,19 @@ plt.xlabel('Index of bin')
 plt.ylabel('Frequency')
 plt.scatter(a, stat, label = 'x = 0.2323232, R = 4.0')
 plt.legend(loc = 'upper right')
-plt.show()"""
+plt.show()
+
+file = open('logistic_data.txt','w')
 
 encryption()
 decryption()
 
-plt.hist(np.ravel(enc_img))
-plt.show()
+enc_img_flat = np.ravel(enc_img)
+
+print(enc_img_flat)
+
+for i in range(0, iter):
+    file.write("%r \n" %(enc_img_flat[i]))
 
 cv2.imshow('original', img)                                     #displays image
 cv2.imshow('encrypted image', enc_img)

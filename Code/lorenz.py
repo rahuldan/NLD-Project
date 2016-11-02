@@ -12,7 +12,7 @@ Xub = 5.0
 Xlb = -5.0
 Xmax = 1.0                                                  #upper limit of bin
 Xmin = 0                                                    #lower limit of bin
-S = 256
+S = 317
 epsilon = (Xmax - Xmin) / S
 n = 0.7                                                     #gaussian random variable parameter
 N0 = 10                                                     #minimum number of iteration
@@ -25,8 +25,13 @@ p = 1                                                       #modulo parameter
 iter = 100000                                                #for statistical analysis
 stat = np.zeros(S)
 
-img = cv2.imread("image file name")                         #Enter the name of the image file
-img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+num_val = 200
+stat2 = np.zeros(num_val)
+
+#img = cv2.imread("image file name")                         #Enter the name of the image file
+#img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+img = np.ones(shape = (S, S), dtype = np.uint8)
 
 img_shape = np.shape(img)
 enc_img = np.zeros(shape = img_shape, dtype = np.uint16)
@@ -83,7 +88,7 @@ def statistic():
             bin_n = find_bin(temp)
             stat[bin_n] += 1
 
-statistic()
+"""statistic()
 a = np.arange(S)
 print(stat)
 
@@ -91,10 +96,39 @@ plt.xlabel('Index of bin')
 plt.ylabel('Frequency')
 plt.scatter(a, stat, label = 'x = 4, y = -1, z = -3')
 plt.legend(loc = 'upper right')
+plt.show()"""
+
+X_samp = np.linspace(-5, 5, num = num_val)
+Y_samp = np.linspace(-5, 5, num = num_val)
+Z_samp = np.linspace(-5, 5, num = num_val)
+
+b = np.column_stack((X_samp, Y_samp, Z_samp))
+
+def logistic_stat2():
+    iter = 10000
+    for i in range(0, num_val):
+        Q = b[i]
+        for j in range(0, iter):
+            Q = RK4(Q)
+        stat2[i] = Q[0]
+
+logistic_stat2()
+plt.plot(X_samp, stat2, label = 'Sigma = 10.0, R = 28.0, Beta = 2.667')
+plt.xlabel('Initial Condition')
+plt.ylabel('Mapped Value after 10000 Iterations')
+plt.legend(loc = 'upper right')
 plt.show()
+
+file = open('lorenz_baptista_data.txt','w')
+
+enc_img_flat = np.ravel(enc_img)
 
 encryption()
 decryption()
+
+for i in range(0, iter):
+    file.write("%r \n" %(enc_img_flat[i]))
+
 cv2.imshow('original', img)                                 #displays image
 cv2.imshow('encrypted image', enc_img)
 cv2.imshow('decrypted image', dec_img)

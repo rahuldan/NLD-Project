@@ -12,8 +12,12 @@ h = 255                                                 #upper limit of random i
 k = np.random.random_integers(l, high = h, size = N)    #random key vector
 R = 3.9                                                 #parameter for logistic map
 
-img = cv2.imread("image file name")
-img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+S = 317
+
+#img = cv2.imread("image file name")
+#img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+img = np.ones(shape = (S, S), dtype = np.uint8)
 
 img_shape = np.shape(img)
 enc_img = np.zeros(shape = img_shape, dtype = np.uint8)
@@ -44,8 +48,17 @@ def decryption():
                 X = logistic_map(R, X)
             dec_img[i][j] = enc_img[i][j] - int(X * 256)
 
+file = open('simple_cipher_data.txt','w')
+
 encryption()
 decryption()
+
+enc_img_flat = np.ravel(enc_img)
+
+iter = S**2
+
+for i in range(0, iter):
+    file.write("%r \n" %(enc_img_flat[i]))
 
 cv2.imshow('original', img)                             #displays image
 cv2.imshow('encrypted image', enc_img)
